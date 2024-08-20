@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-clients-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Admin
+  User
+}
+
+model Avatars {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  public_id String
+  url String
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+}
+
+model User {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String @unique
+  phone_number Float @unique
+  address      String?
+  password     String
+  avatar       Avatars?
+  role         Role @default(User)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+
+
+
+
+
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="mongodb+srv://elited013:1251247@micro.i9t20.mongodb.net/Micro"
+ACTIVATION_SECRET=742598025729038578
+SMTP_HOST=smtp.gmail.com
+SMTP_SEVRICE=gmail
+SMTP_USER='elited013@gmail.com'
+SMTP_PASSWORD='mskw vxnk wmpq cllo'
+ACCESS_TOKEN_SECRET='JSX/(<)4hRM7f`PFctC![u'
+REFRESH_TOKEN_SECRET='c-~x3k<FhjW(2@Zum;]!M+'
+
+
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  async onModuleInit() {
+    await this.$connect();
+  }
+}
