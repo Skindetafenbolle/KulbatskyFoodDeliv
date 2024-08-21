@@ -1,5 +1,5 @@
-import styles from '../../utils/style'
-import { Button } from "@nextui-org/button";
+import styles from '../../utils/style';
+import { Button } from '@nextui-org/button';
 
 const Hero = () => {
   return (

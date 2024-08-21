@@ -48,7 +48,6 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-
   private async updateAccessToken(req: any): Promise<void> {
     try {
       const refreshTokenData = req.headers.refreshtoken as string;

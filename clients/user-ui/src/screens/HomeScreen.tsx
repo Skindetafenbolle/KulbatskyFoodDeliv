@@ -6,7 +6,7 @@ const HomeScreen = () => {
   return (
     <div>
       <Header />
-      <Hero/>
+      <Hero />
     </div>
   );
 };

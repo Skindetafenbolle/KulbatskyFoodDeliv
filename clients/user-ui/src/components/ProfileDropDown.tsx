@@ -1,18 +1,18 @@
-"use client";
+'use client';
 import {
   Avatar,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { CgProfile } from "react-icons/cg";
-import AuthScreen from "../screens/AuthScreen";
-import toast from "react-hot-toast";
-import Cookies from "js-cookie";
-import { signOut, useSession } from "next-auth/react";
-import { registerUser } from '../actions/register-user'
+} from '@nextui-org/react';
+import { useEffect, useState } from 'react';
+import { CgProfile } from 'react-icons/cg';
+import AuthScreen from '../screens/AuthScreen';
+import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
+import { signOut, useSession } from 'next-auth/react';
+import { registerUser } from '../actions/register-user';
 import useUser from '../hooks/useUser';
 
 const ProfileDropDown = () => {
@@ -35,9 +35,9 @@ const ProfileDropDown = () => {
     if (data?.user) {
       signOut();
     } else {
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
-      toast.success("Log out successful!");
+      Cookies.remove('access_token');
+      Cookies.remove('refresh_token');
+      toast.success('Log out successful!');
       window.location.reload();
     }
   };

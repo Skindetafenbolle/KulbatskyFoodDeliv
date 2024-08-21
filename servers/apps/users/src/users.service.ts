@@ -86,7 +86,6 @@ export class UsersService {
     return { activation_token, response };
   }
 
-  // create activation token
   async createActivationToken(user: UserData) {
     const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -103,7 +102,6 @@ export class UsersService {
     return { token, activationCode };
   }
 
-  // activation user
   async activateUser(activationDto: ActivationDto, response: Response) {
     const { activationToken, activationCode } = activationDto;
 
@@ -140,7 +138,6 @@ export class UsersService {
     return { user, response };
   }
 
-  // Login service
   async Login(loginDto: LoginDto) {
     const { email, password } = loginDto;
     const user = await this.prisma.user.findUnique({
@@ -164,7 +161,6 @@ export class UsersService {
     }
   }
 
-  // compare with hashed password
   async comparePassword(
     password: string,
     hashedPassword: string,
@@ -172,7 +168,6 @@ export class UsersService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  // generate forgot password link
   async generateForgotPasswordLink(user: User) {
     const forgotPasswordToken = this.jwtService.sign(
       {
@@ -186,24 +181,30 @@ export class UsersService {
     return forgotPasswordToken;
   }
 
-  // forgot password
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    console.time('forgotPassword');
     const { email } = forgotPasswordDto;
+    console.time('findUnique');
     const user = await this.prisma.user.findUnique({
       where: {
         email,
       },
     });
+    console.timeEnd('findUnique');
 
     if (!user) {
       throw new BadRequestException('User not found with this email!');
     }
+
+    console.time('generateForgotPasswordLink');
     const forgotPasswordToken = await this.generateForgotPasswordLink(user);
+    console.timeEnd('generateForgotPasswordLink');
 
     const resetPasswordUrl =
       this.configService.get<string>('CLIENT_SIDE_URI') +
       `/reset-password?verify=${forgotPasswordToken}`;
 
+    console.time('sendMail');
     await this.emailService.sendMail({
       email,
       subject: 'Reset your Password!',
@@ -211,11 +212,12 @@ export class UsersService {
       name: user.name,
       activationCode: resetPasswordUrl,
     });
+    console.timeEnd('sendMail');
 
-    return { message: `Your forgot password request succesful!` };
+    console.timeEnd('forgotPassword');
+    return { message: `Your forgot password request successful!` };
   }
 
-  // reset password
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { password, activationToken } = resetPasswordDto;
 
@@ -239,8 +241,6 @@ export class UsersService {
     return { user };
   }
 
-  // get logged in user
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getLoggedInUser(req: any) {
     const user = req.user;
     const refreshToken = req.refreshtoken;
@@ -248,8 +248,6 @@ export class UsersService {
     return { user, refreshToken, accessToken };
   }
 
-  // log out user
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async Logout(req: any) {
     req.user = null;
     req.refreshtoken = null;
@@ -257,7 +255,6 @@ export class UsersService {
     return { message: 'Logged out successfully!' };
   }
 
-  // get all users service
   async getUsers() {
     return this.prisma.user.findMany({});
   }
